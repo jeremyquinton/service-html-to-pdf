@@ -2,6 +2,7 @@
 
 const chromium = require('chrome-aws-lambda');
 const fs = require('fs');
+const AWS = require('aws-sdk');
 
 module.exports.htmltopdf = async (event, context) => {
 
@@ -10,19 +11,12 @@ module.exports.htmltopdf = async (event, context) => {
 
     try {
 
+        //in the serverless.yml we specify binaryMediaTypes: */* which means that the incoming data body is
+        //also base64 decoded. Even setting Accept-type and Content-Type on the client does not help.
+        //therefore its based 64 in and base 64 out.
+        var buf = Buffer.from(event.body, 'base64');
 
-        if (event.queryStringParameters.url == null) {
-
-            let response = {
-                statusCode: 400,
-                body: "Request requires url parameter"
-            };
-
-            return response;
-        }
-
-        //need to validate the url
-        let url = event['queryStringParameters']['url'];
+        const data = JSON.parse(buf);
 
         browser = await chromium.puppeteer.launch({
             args: chromium.args,
@@ -36,7 +30,7 @@ module.exports.htmltopdf = async (event, context) => {
         //check the header of the client
 
         let page = await browser.newPage();
-        await page.goto(url, {waitUntil: 'networkidle2'});
+        await page.goto(data.url, {waitUntil: 'networkidle2'});
         const result = await page.pdf({
             format: 'A4',
             printBackground: true,
@@ -48,14 +42,6 @@ module.exports.htmltopdf = async (event, context) => {
             }
         });
 
-        // fs.writeFile("/Users/jeremyquinton/Development/copia/html_pdf_generator/service-html-to-pdf/file.pdf", result, function(err) {
-        //     if(err) {
-        //         return console.log(err);
-        //     }
-        //
-        //     console.log("The file was saved!");
-        // });
-
         let response = {
             statusCode: 200,
             headers: {'Content-type' : 'application/pdf'},
@@ -64,7 +50,6 @@ module.exports.htmltopdf = async (event, context) => {
         };
 
         return response;
-
 
     } catch (error) {
         return context.fail(error);
