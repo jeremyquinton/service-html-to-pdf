@@ -10,6 +10,7 @@ provider:
       - '*/*'
   memorySize: 1600
   region: eu-west-1
+  timeout: 10
 
 functions:
   htmltopdf:
