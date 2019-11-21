@@ -6,9 +6,27 @@ const AWS = require('aws-sdk');
 
 module.exports.htmltopdf = async (event, context) => {
 
-  let browser = null;
+    let browser = null;
 
     try {
+
+        if (event.httpMethod == "OPTIONS") {
+            let response = {
+                statusCode: 200,
+                headers:
+                {
+                "Access-Control-Allow-Origin":'*',
+                "Access-Control-Allow-Credentials":true,
+                "Access-Control-Allow-Methods":"OPTIONS,POST",
+                "Access-Control-Allow-Headers":"Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent",
+                "Content-Type":"application/json"
+                },
+                body: '',
+                isBase64Encoded : true,
+            };
+
+            return response;
+        }
 
         //in the serverless.yml we specify binaryMediaTypes: */* which means that the incoming data body is
         //also base64 decoded. Even setting Accept-type and Content-Type on the client does not help.
