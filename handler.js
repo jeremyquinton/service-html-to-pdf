@@ -51,10 +51,10 @@ module.exports.htmltopdf = async (event, context) => {
             format: 'A4',
             printBackground: true,
             margin: {
-                left: '0px',
-                top: '0px',
-                right: '0px',
-                bottom: '0px'
+                left: '10mm',
+                top: '10mm',
+                right: '10mm',
+                bottom: '10mm'
             }
         });
 
@@ -106,10 +106,10 @@ module.exports.urltopdf = async (event, context) => {
             format: 'A4',
             printBackground: true,
             margin: {
-                left: '0px',
-                top: '0px',
-                right: '0px',
-                bottom: '0px'
+                left: '10mm',
+                top: '10mm',
+                right: '10mm',
+                bottom: '10mm'
             }
         });
 
